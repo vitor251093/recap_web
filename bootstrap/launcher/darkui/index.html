@@ -791,20 +791,24 @@
             /**
              * Our text needs to be localized!
              */
-            function setLocalizedText(){
+             function setLocalizedText(){
                 localizedstringmap = localizedkeymap;
 
                 // play button
-                $("#Play_button_font_active").html(localizedstringmap['PLAY']);
+                document.getElementById("Play_button_font_active").innerHTML = localizedstringmap['PLAY'];
 
                 // validate button
-                $("#Validate_button_font_active").html(localizedstringmap['VALIDATE_INSTALL']);
+                document.getElementById("Validate_button_font_active").innerHTML = localizedstringmap['VALIDATE_INSTALL'];
 
                 // server status
-                $("#Server_Header").html(localizedstringmap['SERVER_STATUS'] + ':');
+                document.getElementById("Server_Header").innerHTML = localizedstringmap['SERVER_STATUS'];
 
                 // server condition
-                $("#Server_condition").html('<div style="color:#FFFFFF;font-size:11px;" align="right">'+localizedstringmap['CONTACTING'] + '</div>');
+                var container = document.getElementById("Server_condition");
+                var innervar;
+                innervar = '<div style="color:#FFFFFF;font-family:Arial;font-size:11px;" align="right">'+localizedstringmap['CONTACTING'];
+                innervar += '<img src="images/icon_light_yellow.png" style="position: relative;top: 3px; left: 2px;" /></div>';
+                container.innerHTML = innervar;
             }
 
             window.onload = function()

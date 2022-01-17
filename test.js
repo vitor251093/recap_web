@@ -1,10 +1,13 @@
 // Modules to control application life and create native browser window
 const electron = require('electron')
-const {BrowserWindow} = require('electron')
+const {BrowserWindow, protocol} = require('electron')
 const path = require('path')
-const url = require('url');
+const url = require('url')
+const fs = require('fs')
 const electronApp = electron.app
 electronApp.commandLine.appendSwitch("disable-http-cache")
+
+const theme = "darkui";
 
 const appDir = path.dirname(require.main.filename);
 const rootDir = url.pathToFileURL(appDir)
@@ -37,7 +40,7 @@ function startWindow(file, {width, height, backgroundColor, title}) {
 }
 
 function startGameLauncherWindow(title) {
-    var win = startWindow('bootstrap/launcher/darkui/index.html', {
+    var win = startWindow(`bootstrap/launcher/${theme}/index.html`, {
         width: 800, height: 600, backgroundColor:"#FFF", title: title
     })
     win.webContents.session.webRequest.onBeforeRequest({urls:[
@@ -45,10 +48,10 @@ function startGameLauncherWindow(title) {
         "file:///ingame/*"
     ]}, (details, callback) => {
         if (details.url === "file:///bootstrap/launcher/notes") {
-            callback({redirectURL: rootDir + details.url.substring("file://".length) + ".html"});
+            return callback({redirectURL: rootDir + details.url.substring("file://".length) + ".html"});
         }
         if (details.url.startsWith("file:///ingame/")) {
-            callback({redirectURL: rootDir + details.url.substring("file://".length)});
+            return callback({redirectURL: rootDir + details.url.substring("file://".length)});
         }
     });
     return win
