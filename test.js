@@ -60,7 +60,9 @@ function startGameLauncherWindow(title) {
     win.webContents.session.webRequest.onBeforeRequest({urls:[
         "file:///bootstrap/launcher/notes",
         "file:///ingame/*",
-        "file:///*.js"
+        "file:///*.js",
+        "https://localhost/*",
+        "http://localhost/*"
     ]}, (details, callback) => {
         let fileUrl = details.url
         if (fileUrl === "file:///bootstrap/launcher/notes") {
@@ -70,12 +72,12 @@ function startGameLauncherWindow(title) {
             fileUrl = rootDir + fileUrl.substring("file://".length)
         }
 
-        if (fileUrl.endsWith(".html")) {
+        if (fileUrl.startsWith("file://") && fileUrl.endsWith(".html")) {
             let filePath = url.fileURLToPath(fileUrl)
             let fileContents = fs.readFileSync(filePath, {encoding:"utf8"})
             return callback({redirectURL: "data:text/html," + encodeURIComponent(replaceVariablesInString(fileContents))});
         }
-        else if (fileUrl.endsWith(".js")) {
+        else if (fileUrl.startsWith("file://") && fileUrl.endsWith(".js")) {
             let filePath = url.fileURLToPath(fileUrl)
             let fileContents = fs.readFileSync(filePath, {encoding:"utf8"})
             return callback({redirectURL: "data:text/javascript," + encodeURIComponent(replaceVariablesInString(fileContents))});
