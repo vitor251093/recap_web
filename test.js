@@ -7,6 +7,7 @@ const fs = require('fs')
 const electronApp = electron.app
 electronApp.commandLine.appendSwitch("disable-http-cache")
 
+const darksporeVersion = "5.3.0.127"
 const theme = "darkui";
 
 const appDir = path.dirname(require.main.filename);
@@ -32,11 +33,24 @@ function startWindow(file, {width, height, backgroundColor, title}) {
                 devTools: true,
                 nodeIntegration: false,
                 contextIsolation: false,
-                enableRemoteModule: true
+                enableRemoteModule: true,
+                preload: path.join(__dirname, 'test_preload.js')
             }
         })
-    win.loadFile(file)
+    win.loadFile(file, {query:{version:darksporeVersion}})
     return win
+}
+
+function replaceVariablesInString(str) {
+    let newStrObj = {str}
+    const variables = [
+        {key:"recap-version", value:"0.0.1"},
+        {key:"game-mode", value:"Singleplayer"},
+        {key:"host", value:"localhost"},
+        {key:"isDev", value:"true"}
+    ]
+    variables.forEach(v => newStrObj.str = newStrObj.str.split("{{" + v.key + "}}").join(v.value))
+    return newStrObj.str
 }
 
 function startGameLauncherWindow(title) {
@@ -45,13 +59,29 @@ function startGameLauncherWindow(title) {
     })
     win.webContents.session.webRequest.onBeforeRequest({urls:[
         "file:///bootstrap/launcher/notes",
-        "file:///ingame/*"
+        "file:///ingame/*",
+        "file:///*.js"
     ]}, (details, callback) => {
-        if (details.url === "file:///bootstrap/launcher/notes") {
-            return callback({redirectURL: rootDir + details.url.substring("file://".length) + ".html"});
+        let fileUrl = details.url
+        if (fileUrl === "file:///bootstrap/launcher/notes") {
+            fileUrl = rootDir + fileUrl.substring("file://".length) + ".html"
         }
-        if (details.url.startsWith("file:///ingame/")) {
-            return callback({redirectURL: rootDir + details.url.substring("file://".length)});
+        if (fileUrl.startsWith("file:///ingame/")) {
+            fileUrl = rootDir + fileUrl.substring("file://".length)
+        }
+
+        if (fileUrl.endsWith(".html")) {
+            let filePath = url.fileURLToPath(fileUrl)
+            let fileContents = fs.readFileSync(filePath, {encoding:"utf8"})
+            return callback({redirectURL: "data:text/html," + encodeURIComponent(replaceVariablesInString(fileContents))});
+        }
+        else if (fileUrl.endsWith(".js")) {
+            let filePath = url.fileURLToPath(fileUrl)
+            let fileContents = fs.readFileSync(filePath, {encoding:"utf8"})
+            return callback({redirectURL: "data:text/javascript," + encodeURIComponent(replaceVariablesInString(fileContents))});
+        }
+        else {
+            return callback({redirectURL: fileUrl});
         }
     });
     return win
