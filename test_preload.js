@@ -1,22 +1,22 @@
-const ipc = require('electron').ipcRenderer
+const {ipcRenderer, shell} = require('electron')
 
 global.Client = {
     closeCurrentApp: function() {
-        ipc.send("close-application")
+        ipcRenderer.send("close-application")
     },
     minCurrentApp: function() {
-
+        ipcRenderer.send("minimize-application")
     },
     playCurrentApp: function() {
-        ipc.send("close-application")
+        ipcRenderer.send("close-application")
     },
     checkImage: function() {
 
     },
-    openBrowser: function() {
-
+    openBrowser: function(url) {
+        shell.openExternal(url);
     },
     requestStatusRefresh: function() {
-
+        ipcRenderer.send("refresh-status")
     }
 }

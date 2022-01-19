@@ -13,6 +13,8 @@ const theme = "darkui";
 const appDir = path.dirname(require.main.filename);
 const rootDir = url.pathToFileURL(appDir)
 
+let mainWindow = null
+
 function startWindow(file, {width, height, backgroundColor, title}) {
     let win = new BrowserWindow({
             width: width,
@@ -89,17 +91,23 @@ function startGameLauncherWindow(title) {
     return win
 }
 
+let refreshMainWindowStatus = () => {
+    mainWindow.webContents.executeJavaScript("setPatcherStatus(true); setServerStatus(true, false, 0);");
+}
+
+ipcMain.on('refresh-status', (event) => {
+    refreshMainWindowStatus()
+})
+ipcMain.on('minimize-application', (event) => {
+    mainWindow.minimize()
+})
 ipcMain.on('close-application', (event) => {
     electronApp.quit()
 })
 
 electronApp.on('ready', function() {
-    let mainWindow = startGameLauncherWindow(electronApp.name)
-    mainWindow.webContents.on('did-finish-load', function() {
-        setTimeout(() => {
-            mainWindow.webContents.executeJavaScript("setPatcherStatus(true); setServerStatus(true, false, 0);");
-        }, 1000)
-    });
+    mainWindow = startGameLauncherWindow(electronApp.name)
+    mainWindow.webContents.on('did-finish-load', refreshMainWindowStatus);
 })
 
 electronApp.on('window-all-closed', function () {
