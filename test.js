@@ -90,7 +90,12 @@ function startGameLauncherWindow(title) {
 }
 
 electronApp.on('ready', function() {
-    startGameLauncherWindow(electronApp.name)
+    let mainWindow = startGameLauncherWindow(electronApp.name)
+    mainWindow.webContents.on('did-finish-load', function() {
+        setTimeout(() => {
+            mainWindow.webContents.executeJavaScript("setPatcherStatus(true); setServerStatus(true, false, 0);");
+        }, 1000)
+    });
 })
 
 electronApp.on('window-all-closed', function () {
