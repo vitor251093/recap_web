@@ -36,7 +36,7 @@ function startWindow(file, {width, height, backgroundColor, title}) {
                 nodeIntegration: true,
                 contextIsolation: false,
                 enableRemoteModule: true,
-                preload: path.join(__dirname, 'test_preload.js')
+                preload: path.join(__dirname, 'test', 'preload.js')
             }
         })
     win.loadFile(file, {query:{version:darksporeVersion}})
@@ -62,6 +62,7 @@ function startGameLauncherWindow(title) {
     win.webContents.session.webRequest.onBeforeRequest({urls:[
         "file:///bootstrap/launcher/notes",
         "file:///ingame/*",
+        "file:///test/*",
         "file:///*.js",
         "https://localhost/*",
         "http://localhost/*"
@@ -71,6 +72,9 @@ function startGameLauncherWindow(title) {
             fileUrl = rootDir + fileUrl.substring("file://".length) + ".html"
         }
         if (fileUrl.startsWith("file:///ingame/")) {
+            fileUrl = rootDir + fileUrl.substring("file://".length)
+        }
+        if (fileUrl.startsWith("file:///test/")) {
             fileUrl = rootDir + fileUrl.substring("file://".length)
         }
 

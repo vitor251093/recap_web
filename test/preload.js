@@ -20,3 +20,10 @@ global.Client = {
         ipcRenderer.send("refresh-status")
     }
 }
+
+const new_font = new FontFace('EA Pirulen Rg DS', 'url("/test/pirulenrg.ttf")')
+new_font.load().then(function(loadedFont) {
+    document.fonts.add(loadedFont);
+}).catch(function(error) {
+    console.error(error)
+});
