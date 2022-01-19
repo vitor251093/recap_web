@@ -4,7 +4,7 @@
     border: none;
     color: #b4b7b9;
     text-align: center;
-    height: 25px;
+    height: 48px;
     padding: 17px;
     position: relative;
     background: url("../images/registrationButton-hover-center.png") repeat-x; /* avoids blink on first hover */

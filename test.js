@@ -16,7 +16,7 @@ const rootDir = url.pathToFileURL(appDir)
 
 let mainWindow = null
 
-function startWindow(file, {width, height, backgroundColor, title}) {
+function startWindow(file, {width, height, backgroundColor, title, frame}) {
     let win = new BrowserWindow({
             width: width,
             height: height,
@@ -30,6 +30,7 @@ function startWindow(file, {width, height, backgroundColor, title}) {
             closable: true,
             fullscreenable: false,
             show: true, 
+            frame: frame,
             autoHideMenuBar: true,
             webPreferences: {
                 webviewTag: false,
@@ -58,7 +59,7 @@ function replaceVariablesInString(str) {
 
 function startGameLauncherWindow(title) {
     var win = startWindow(`bootstrap/launcher/${theme}/index.html`, {
-        width: 800, height: 600, backgroundColor:"#FFF", title: title
+        width: 800, height: 600, backgroundColor:"#FFF", title: title, frame: false
     })
     win.webContents.session.webRequest.onBeforeRequest({urls:[
         "file:///bootstrap/launcher/notes",
