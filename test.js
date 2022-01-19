@@ -6,6 +6,7 @@ const url = require('url')
 const fs = require('fs')
 const electronApp = electron.app
 electronApp.commandLine.appendSwitch("disable-http-cache")
+electronApp.commandLine.appendSwitch("disable-site-isolation-trials")
 
 const darksporeVersion = "5.3.0.127"
 const theme = "darkui";
@@ -99,6 +100,10 @@ let refreshMainWindowStatus = () => {
     mainWindow.webContents.executeJavaScript("setPatcherStatus(true); setServerStatus(true, false, 0);");
 }
 
+ipcMain.on('load-pirulen-font', (event) => {
+    mainWindow.webContents.executeJavaScript("document.fonts.add(global.pirulenFont)");
+    mainWindow.webContents.executeJavaScript("document.getElementById('Patch_Content_Frame').contentWindow.document.fonts.add(global.pirulenFont)");
+})
 ipcMain.on('refresh-status', (event) => {
     refreshMainWindowStatus()
 })

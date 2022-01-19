@@ -21,9 +21,9 @@ global.Client = {
     }
 }
 
-const new_font = new FontFace('EA Pirulen Rg DS', 'url("/test/pirulenrg.ttf")')
-new_font.load().then(function(loadedFont) {
-    document.fonts.add(loadedFont);
+global.pirulenFont = new FontFace('EA Pirulen Rg DS', 'url("/test/pirulenrg.ttf")')
+global.pirulenFont.load().then(function(loadedFont) {
+    ipcRenderer.send("load-pirulen-font")
 }).catch(function(error) {
     console.error(error)
 });
