@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
 const electron = require('electron')
-const {BrowserWindow, protocol} = require('electron')
+const {BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
@@ -31,7 +31,7 @@ function startWindow(file, {width, height, backgroundColor, title}) {
             webPreferences: {
                 webviewTag: false,
                 devTools: true,
-                nodeIntegration: false,
+                nodeIntegration: true,
                 contextIsolation: false,
                 enableRemoteModule: true,
                 preload: path.join(__dirname, 'test_preload.js')
@@ -88,6 +88,10 @@ function startGameLauncherWindow(title) {
     });
     return win
 }
+
+ipcMain.on('close-application', (event) => {
+    electronApp.quit()
+})
 
 electronApp.on('ready', function() {
     let mainWindow = startGameLauncherWindow(electronApp.name)
