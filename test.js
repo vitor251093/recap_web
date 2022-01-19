@@ -56,11 +56,7 @@ function replaceVariablesInString(str) {
     variables.forEach(v => newStrObj.str = newStrObj.str.split("{{" + v.key + "}}").join(v.value))
     return newStrObj.str
 }
-
-function startGameLauncherWindow(title) {
-    var win = startWindow(`bootstrap/launcher/${theme}/index.html`, {
-        width: 800, height: 600, backgroundColor:"#FFF", title: title, frame: false
-    })
+function redirectRequestsToRunLocally(win) {
     win.webContents.session.webRequest.onBeforeRequest({urls:[
         "file:///bootstrap/launcher/notes",
         "file:///ingame/*",
@@ -94,6 +90,21 @@ function startGameLauncherWindow(title) {
             return callback({redirectURL: fileUrl});
         }
     });
+}
+
+function startGameLauncherWindow(title) {
+    var win = startWindow(`bootstrap/launcher/${theme}/index.html`, {
+        width: 800, height: 600, backgroundColor:"#FFF", title: title, frame: false
+    })
+    redirectRequestsToRunLocally(win)
+    return win
+}
+
+function startRegistrationWindow(title) {
+    var win = startWindow(`ingame/register.html`, {
+        width: 800, height: 600, backgroundColor:"#FFF", title: title, frame: true
+    })
+    redirectRequestsToRunLocally(win)
     return win
 }
 
@@ -116,8 +127,10 @@ ipcMain.on('close-application', (event) => {
 })
 
 electronApp.on('ready', function() {
-    mainWindow = startGameLauncherWindow(electronApp.name)
+    mainWindow = startGameLauncherWindow("Darkspore - Launcher")
     mainWindow.webContents.on('did-finish-load', refreshMainWindowStatus);
+
+    let registrationWindow = startRegistrationWindow("Darkspore - Registration window")
 })
 
 electronApp.on('window-all-closed', function () {
