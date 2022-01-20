@@ -1,26 +1,3 @@
-
-var EAWebKit = {
-	isUserAgent: function() {
-		return navigator.userAgent.indexOf("EAWebKit") != -1;
-	},
-	closeWindow: function() {
-		if (EAWebKit.isUserAgent()) {
-			Client.closeWindow();
-		} else {
-			window.close();
-		}
-	},
-	openExternalBrowser: function(url) {
-		if (EAWebKit.isUserAgent()) {
-			Client.openExternalBrowser(url);
-		} else {
-			window.open(url);
-		}
-	}
-};
-
-
-
 var Utils = {
 	type: function(obj) {
 		return Object.prototype.toString.call(obj);

@@ -16,7 +16,7 @@ app.controller('registerCtrl', function($scope, $timeout) {
         $scope.showMessageDialog = false;
         
         if ($scope.closeWindowOnMessageClose) {
-            EAWebKit.closeWindow();
+            Client.closeWindow();
         }
     };
 
@@ -50,7 +50,7 @@ app.controller('registerCtrl', function($scope, $timeout) {
 
 
     $scope.showTerms = function() {
-        EAWebKit.openExternalBrowser('http://tos.ea.com/legalapp/WEBTERMS/us/en/PC/Darkspore');
+        Client.openExternalBrowser('http://tos.ea.com/legalapp/WEBTERMS/us/en/PC/Darkspore');
     };
 
 

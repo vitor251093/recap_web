@@ -15,6 +15,7 @@ const appDir = path.dirname(require.main.filename);
 const rootDir = url.pathToFileURL(appDir)
 
 let mainWindow = null
+let registrationWindow = null
 
 function startWindow(file, {width, height, backgroundColor, title, frame}) {
     let win = new BrowserWindow({
@@ -50,7 +51,7 @@ function replaceVariablesInString(str) {
     const variables = [
         {key:"recap-version", value:"0.0.1"},
         {key:"game-mode", value:"Singleplayer"},
-        {key:"host", value:"localhost"},
+        {key:"host", value:"test/mock"},
         {key:"isDev", value:"true"}
     ]
     variables.forEach(v => newStrObj.str = newStrObj.str.split("{{" + v.key + "}}").join(v.value))
@@ -62,8 +63,8 @@ function redirectRequestsToRunLocally(win) {
         "file:///ingame/*",
         "file:///test/*",
         "file:///*.js",
-        "https://localhost/*",
-        "http://localhost/*"
+        "https://test/mock/*",
+        "http://test/mock/*"
     ]}, (details, callback) => {
         let fileUrl = details.url
         if (fileUrl === "file:///bootstrap/launcher/notes") {
@@ -74,6 +75,20 @@ function redirectRequestsToRunLocally(win) {
         }
         if (fileUrl.startsWith("file:///test/")) {
             fileUrl = rootDir + fileUrl.substring("file://".length)
+        }
+        if (fileUrl.startsWith("https://test/")) {
+            fileUrl = rootDir + fileUrl.substring("https:/".length)
+            let method = url.parse(fileUrl, true).query["method"];
+            if (method) {
+                fileUrl = fileUrl.split("?").shift() + "/" + method
+            }
+        }
+        if (fileUrl.startsWith("http://test/")) {
+            fileUrl = rootDir + fileUrl.substring("http:/".length)
+            let method = url.parse(fileUrl, true).query["method"];
+            if (method) {
+                fileUrl = fileUrl.split("?").shift() + "/" + method
+            }
         }
 
         if (fileUrl.startsWith("file://") && fileUrl.endsWith(".html")) {
@@ -112,14 +127,14 @@ let refreshMainWindowStatus = () => {
     mainWindow.webContents.executeJavaScript("setPatcherStatus(true); setServerStatus(true, false, 0);");
 }
 
-ipcMain.on('load-pirulen-font', (event) => {
+ipcMain.on('main-window-load-pirulen-font', (event) => {
     mainWindow.webContents.executeJavaScript("document.fonts.add(global.pirulenFont)");
     mainWindow.webContents.executeJavaScript("document.getElementById('Patch_Content_Frame').contentWindow.document.fonts.add(global.pirulenFont)");
 })
-ipcMain.on('refresh-status', (event) => {
+ipcMain.on('main-window-refresh-status', (event) => {
     refreshMainWindowStatus()
 })
-ipcMain.on('minimize-application', (event) => {
+ipcMain.on('main-window-minimize-application', (event) => {
     mainWindow.minimize()
 })
 ipcMain.on('close-application', (event) => {
@@ -130,7 +145,7 @@ electronApp.on('ready', function() {
     mainWindow = startGameLauncherWindow("Darkspore - Launcher")
     mainWindow.webContents.on('did-finish-load', refreshMainWindowStatus);
 
-    let registrationWindow = startRegistrationWindow("Darkspore - Registration window")
+    registrationWindow = startRegistrationWindow("Darkspore - Registration window")
 })
 
 electronApp.on('window-all-closed', function () {
