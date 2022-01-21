@@ -778,39 +778,6 @@
             } // end checkPlayStatus
 
             /**
-             * Sets the content frame as a url
-             */
-            function setFrameAsUrl(url)
-            {
-                // make sure no errors are already in place
-                if (!mError) {
-                    el = document.getElementById('Patch_note_frame');
-                    if (null != el)
-                    {
-                        altUrl = "/bootstrap/launcher/notes";
-                        el.innerHTML =  '<iframe id="Patch_Content_Frame" src ="' + altUrl + '" width="473" height="280" frameBorder="0"></iframe>';
-                    }
-                }
-            } //end setFrameAsUrl
-
-            function setFrameAsEmpty()
-            {
-
-                // make sure no errors are already in place
-                if (!mError) {
-
-                    el = document.getElementById('Patch_note_frame');
-                    if (null != el)
-                    {
-                        el.innerHTML =  '';
-                    }
-
-                }
-
-            } //end setFrameAsUrl
-
-
-            /**
              * Sets the content frame as an error
              */
             function setFrameAsError(key, refreshable) {
@@ -1031,7 +998,6 @@
 
                 if (!hasClientRequestStatusRefresh()) {
                     refreshStatus();
-                    setFrameAsUrl(undefined);
                 }
 
                 // refresh the launcher every 5 minutes
@@ -1486,7 +1452,7 @@
 
         <!-- Display downloaded patch notes -->
         <div id="Patch_note_frame" style="position:absolute; top:147px; left:292px; width:430px">
-
+            <iframe id="Patch_Content_Frame" src="/bootstrap/launcher/notes" width="473" height="280" frameBorder="0"></iframe>
         </div>
 
         <!-- Patching progress and play button -->
